@@ -50,10 +50,13 @@ public:
 
     void draw();
 
+    const std::vector<vec4> getPointVector();
+
     // control p/r/y with mouse??
 //    void setRotation(float pitch, float roll, float yaw);
 
 private:
+    std::vector<vec4> points; 
     GLsizei size{};
     GLuint vaoId{};
     GLuint pointsGPU{};
@@ -247,6 +250,34 @@ public:
         return pcCenter;
     }
 
+    void highlightPoint(int xpos, int ypos) 
+    {
+        const std::vector<vec4> points = pointClouds[0].getPointVector(); 
+        //std::cout << pointClouds.size() << std::endl; 
+        std::cout << "Cursor Position at X: " << xpos << " , Y: " << ypos << std::endl;
+        // std::cout << "Point Vector Size: " << points.size() << std::endl; 
+        std::cout << "Point X: " << points[1287].x << std::endl; 
+        std::cout << "Point Y: " << points[1287].y << std::endl; 
+        std::cout << "Point Z: " << points[1287].z << std::endl; 
+        glm::mat4 mvp_mat = camera.projection * camera.getView();
+        // glUseProgram(objectShader.getProgramId());
+        // glUniformMatrix4fv(glGetUniformLocation(objectShader.getProgramId(), "u_mvpMatrix"), 1, GL_FALSE, glm::value_ptr(mvp_mat));
+        
+        // std::cout << (u_mvpMatrix * points[1287]).x << std::endl; 
+
+
+        //std::cout << "mvp_mat generated successfully" << std::endl; 
+        // std::cout << (mvp_mat * points[1287]).x << std::endl;
+        // std::cout << (mvp_mat * points[1287]).y << std::endl; 
+        // std::cout << (mvp_mat * points[1287]).z << std::endl; 
+ 
+    //     shift eye by mouse
+    //     for each point
+    //         dir = glm::vec3{0.0f, 0.0f, 1.0f} * getRotation()
+    //         intersect shifted eye and dir
+    //     end
+    }
+
 private:
     // Internals
     Camera camera;
@@ -271,6 +302,8 @@ private:
     static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
     static void cursorPosCallback(GLFWwindow* window, double xpos, double ypos);
+
+    static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 
     // states
     double prevMouseX, prevMouseY;

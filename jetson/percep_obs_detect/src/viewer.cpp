@@ -255,6 +255,16 @@ void PointCloud::update(vec4* pts, int size) {
     // Points
     glBindBuffer(GL_ARRAY_BUFFER, pointsGPU);
     glBufferData(GL_ARRAY_BUFFER, size * sizeof(vec4), pts, GL_DYNAMIC_DRAW);
+
+    for(int i = 0; i < size; i++)
+    {
+        points.push_back(*(pts + i));
+    }
+}
+
+const std::vector<vec4> PointCloud::getPointVector()
+{
+    return points; 
 }
 
 void PointCloud::draw() {
@@ -332,6 +342,7 @@ Viewer::Viewer()
     glfwSetScrollCallback(window, scrollCallback);
     glfwSetKeyCallback(window, keyCallback);
     glfwSetCursorPosCallback(window, cursorPosCallback);
+    glfwSetMouseButtonCallback(window, mouseButtonCallback);
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -345,6 +356,8 @@ Viewer::~Viewer() {
     glfwDestroyWindow(window);
     glfwTerminate();
 }
+
+
 
 void Viewer::scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
     auto viewer = static_cast<Viewer*>(glfwGetWindowUserPointer(window));
@@ -423,6 +436,20 @@ void Viewer::cursorPosCallback(GLFWwindow* window, double xpos, double ypos) {
         glfwSetCursorPos(window, width / 2, height / 2);
     }
     viewer->prevFocused = focused;
+}
+
+// Highlights point when mouse rightclicked and displays coordinates of closest point 
+void Viewer::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+{
+    auto viewer = static_cast<Viewer*>(glfwGetWindowUserPointer(window));
+
+    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
+    {
+        double xpos, ypos;
+        //getting cursor position
+        glfwGetCursorPos(window, &xpos, &ypos);
+        viewer->highlightPoint(xpos, ypos); 
+    }
 }
 
 // Viewer tick
